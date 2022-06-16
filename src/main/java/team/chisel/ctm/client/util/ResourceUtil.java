@@ -55,24 +55,6 @@ public class ResourceUtil {
 	}
 
 	@Nullable
-	public static CTMMetadataSection getMetadataUnsafe(Identifier identifier) {
-		try {
-			return getMetadata(identifier);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Nullable
-	public static CTMMetadataSection getMetadataUnsafe(Sprite sprite) {
-		try {
-			return getMetadata(sprite);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Nullable
 	public static CTMMetadataSection getMetadataSafe(Identifier identifier) {
 		try {
 			return getMetadata(identifier);
