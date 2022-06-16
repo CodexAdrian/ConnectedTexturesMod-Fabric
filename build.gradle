@@ -83,22 +83,53 @@ jar {
 		rename { "${it}_${project.archivesBaseName}" }
 	}
 }
+def mavenUsername = project.findProperty('mavenUserName')
+def mavenPassword = project.findProperty('mavenPassword')
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
+			artifact remapJar
+			artifact remapSourcesJar
+
+			pom {
+				name = "CTM Refabricated"
+				description = "An unofficial port of an unofficial port of CTM"
+				url = "https://github.com/CodexAdrian/ConnectedTexturesMod-Fabric"
+
+				scm {
+					connection = "git:https://github.com/CodexAdrian/ConnectedTexturesMod-Fabric.git"
+					developerConnection = "git:https://github.com/CodexAdrian/ConnectedTexturesMod-Fabric.git"
+					url = "https://github.com/CodexAdrian/ConnectedTexturesMod-Fabric"
+				}
+
+				licenses {
+					license {
+						name = "GNU General Public License v2.0"
+						url = "https://github.com/CodexAdrian/ConnectedTexturesMod-Fabric/blob/1.17/LICENSE"
+					}
+				}
+
+				developers {
+					developer {
+						id = "codexadrian"
+						name = "CodexAdrian"
+						roles = ["Developer"]
+						email = "adrian@terrarium.earth"
+					}
+				}
 			}
 		}
 	}
-
 	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
+		maven {
+			url = "https://nexus.resourcefulbees.com/repository/codexadrian"
+			credentials {
+				username = mavenUsername
+				password = mavenPassword
+			}
+		}
 	}
 }
 
