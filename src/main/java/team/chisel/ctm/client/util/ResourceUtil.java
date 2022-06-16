@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -19,20 +20,16 @@ import team.chisel.ctm.client.resource.CTMMetadataSection;
 public class ResourceUtil {
 	private static final Map<Identifier, CTMMetadataSection> METADATA_CACHE = new HashMap<>();
 
-	public static Resource getResource(Identifier identifier) throws IOException {
+	public static Optional<Resource> getResource(Identifier identifier) {
 		return MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 	}
 
-	public static Resource getResource(Sprite sprite) throws IOException {
+	public static Optional<Resource> getResource(Sprite sprite) {
 		return getResource(toTextureIdentifier(sprite.getId()));
 	}
 
-	public static Resource getResourceUnsafe(Identifier identifier) {
-		try {
-			return getResource(identifier);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public static Optional<Resource> getResourceUnsafe(Identifier identifier) {
+		return getResource(identifier);
 	}
 
 	@Nullable
@@ -41,6 +38,8 @@ public class ResourceUtil {
 			return METADATA_CACHE.get(identifier);
 		}
 		CTMMetadataSection metadata = null;
+		var resource = getResource(identifier);
+		if(resource.isPresent()) metadata = resource.get().getMetadata(CTMMetadataReader.INSTANCE);
 		try (Resource resource = getResource(identifier)) {
 			metadata = resource.getMetadata(CTMMetadataReader.INSTANCE);
 		} finally {

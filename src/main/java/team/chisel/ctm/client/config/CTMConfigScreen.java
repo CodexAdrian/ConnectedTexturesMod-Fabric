@@ -1,19 +1,18 @@
 package team.chisel.ctm.client.config;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 public class CTMConfigScreen extends Screen {
     private final Screen parent;
     private final ConfigManager configManager;
 
     public CTMConfigScreen(Screen parent, ConfigManager configManager) {
-        super(new TranslatableText("screen.ctm.config.title"));
+        super(Text.translatable("screen.ctm.config.title"));
         this.parent = parent;
         this.configManager = configManager;
     }
@@ -27,7 +26,7 @@ public class CTMConfigScreen extends Screen {
                     configManager.getConfig().disableCTM = value;
                 },
                 (button, matrices, mouseX, mouseY) -> {
-                    renderWrappedTooltip(matrices, new TranslatableText("options.ctm.disable_ctm.tooltip"), mouseX, mouseY);
+                    renderWrappedTooltip(matrices, Text.translatable("options.ctm.disable_ctm.tooltip"), mouseX, mouseY);
                 }
         ));
 
@@ -37,7 +36,7 @@ public class CTMConfigScreen extends Screen {
                     button.setMessage(getBooleanOptionText("options.ctm.connect_inside_ctm", value));
                     configManager.getConfig().connectInsideCTM = value;
                 },
-                (button, matrices, mouseX, mouseY) -> renderWrappedTooltip(matrices, new TranslatableText("options.ctm.connect_inside_ctm.tooltip"), mouseX, mouseY)
+                (button, matrices, mouseX, mouseY) -> renderWrappedTooltip(matrices, Text.translatable("options.ctm.connect_inside_ctm.tooltip"), mouseX, mouseY)
         ));
 
         addDrawableChild(new ButtonWidget(width / 2 - 100, (int) (height * 0.8F), 200, 20, ScreenTexts.DONE, (button) -> close()));
@@ -65,6 +64,6 @@ public class CTMConfigScreen extends Screen {
     }
 
     private static Text getBooleanOptionText(String key, boolean value) {
-        return new TranslatableText(key, ScreenTexts.onOrOff(value));
+        return Text.translatable(key, ScreenTexts.onOrOff(value));
     }
 }
