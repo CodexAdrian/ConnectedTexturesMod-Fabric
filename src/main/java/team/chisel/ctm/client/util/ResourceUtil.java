@@ -24,14 +24,6 @@ public class ResourceUtil {
 		return MinecraftClient.getInstance().getResourceManager().getResource(identifier);
 	}
 
-	public static Optional<Resource> getResource(Sprite sprite) {
-		return getResource(toTextureIdentifier(sprite.getId()));
-	}
-
-	public static Optional<Resource> getResourceUnsafe(Identifier identifier) {
-		return getResource(identifier);
-	}
-
 	@Nullable
 	public static CTMMetadataSection getMetadata(Identifier identifier) throws IOException {
 		if (METADATA_CACHE.containsKey(identifier)) {
@@ -39,11 +31,11 @@ public class ResourceUtil {
 		}
 		CTMMetadataSection metadata = null;
 		var resource = getResource(identifier);
-		if(resource.isPresent()) metadata = resource.get().getMetadata(CTMMetadataReader.INSTANCE);
-		try (Resource resource = getResource(identifier)) {
-			metadata = resource.getMetadata(CTMMetadataReader.INSTANCE);
-		} finally {
-			METADATA_CACHE.put(identifier, metadata);
+		if(resource.isPresent()) {
+			metadata = resource.get().getMetadata().decode(CTMMetadataReader.INSTANCE).map(ctmMetadataSection -> {
+				METADATA_CACHE.put(identifier, ctmMetadataSection);
+				return ctmMetadataSection;
+			}).orElse(null);
 		}
 		return metadata;
 	}
@@ -51,24 +43,6 @@ public class ResourceUtil {
 	@Nullable
 	public static CTMMetadataSection getMetadata(Sprite sprite) throws IOException {
 		return getMetadata(toTextureIdentifier(sprite.getId()));
-	}
-
-	@Nullable
-	public static CTMMetadataSection getMetadataUnsafe(Identifier identifier) {
-		try {
-			return getMetadata(identifier);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Nullable
-	public static CTMMetadataSection getMetadataUnsafe(Sprite sprite) {
-		try {
-			return getMetadata(sprite);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Nullable
