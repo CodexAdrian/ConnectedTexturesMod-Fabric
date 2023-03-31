@@ -37,18 +37,12 @@ public class ModelsAddedCallbackHandler implements ModelsAddedCallback {
 	public void onModelsAdded(ModelLoader modelLoader, ResourceManager resourceManager, Profiler profiler, Map<Identifier, UnbakedModel> unbakedModels, Map<Identifier, UnbakedModel> modelsToBake) {
 		Map<Identifier, UnbakedModel> wrappedModels = new HashMap<>();
 
-		UnbakedModel missingModel = unbakedModels.get(ModelLoader.MISSING_ID);
-		Function<Identifier, UnbakedModel> unbakedModelGetter = id -> {
-			UnbakedModel unbakedModel = unbakedModels.get(id);
-			if (unbakedModel == null) {
-				return missingModel;
-			}
-			return unbakedModel;
-		};
+		// Switch to using vanilla load method as some mods depend on this.
+		Function<Identifier, UnbakedModel> unbakedModelGetter = modelLoader::getOrLoadModel;
 		VoidSet<Pair<String, String>> voidSet = VoidSet.get();
-
+		HashMap<Identifier, UnbakedModel> copy = new HashMap<>(unbakedModels); //Copy map to avoid concurrent modification
 		// Check which models should be wrapped
-		for (Map.Entry<Identifier, UnbakedModel> entry : unbakedModels.entrySet()) {
+		for (Map.Entry<Identifier, UnbakedModel> entry : copy.entrySet()) {
 			Identifier identifier = entry.getKey();
 			UnbakedModel unbakedModel = entry.getValue();
 
